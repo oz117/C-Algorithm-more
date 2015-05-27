@@ -1,0 +1,15 @@
+GCC(1)                                                               GNU                                                              GCC(1)
+
+
+
+NAME
+       gcc - GNU project C and C++ compiler
+
+SYNOPSIS
+       gcc [-c|-S|-E] [-std=standard]
+           [-g] [-pg] [-Olevel]
+           [-Wwarn...] [-Wpedantic]
+           [-Idir...] [-Ldir...]
+           [-Dmacro[=defn]...] [-Umacro]
+           [-foption...] [-mmachine-option...]
+           [-o outfile] [@file] infile...
