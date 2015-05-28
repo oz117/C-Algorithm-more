@@ -6,11 +6,7 @@ CC			=	gcc
 RM			=	rm -rf
 ECHO		=	echo
 
-FLAGS		=	-W -Wall -Werror -Wextra -g3
-#			-lasan				\
-			-fsanitize=address		\
-			-fno-omit-frame-pointer		\
-			-O0
+CFLAGS		=	-W -Wall -Werror -Wextra -g3
 #DEBUG		=	-g -g3 -ggdb
 
 DEFAULT		=	"\033[00m"
@@ -18,9 +14,9 @@ GREEN		=	"\033[0;32m"
 TEAL		=	"\033[1;36m"
 RED		=	"\033[0;31m"
 
-INCLUDE		=	-I./
+INCLUDE		=	-I./include/
 
-ENTRYPOINT	=	$(wildcard ./*.c)
+ENTRYPOINT	=	$(wildcard ./src/*.c)
 
 FILE		=	$(ENTRYPOINT)
 
