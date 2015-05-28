@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "get_next_line.h"
 
 static char         *my_strcat_and_realloc(char *line, int b_read, int *line_size) {
@@ -11,7 +10,9 @@ static char         *my_strcat_and_realloc(char *line, int b_read, int *line_siz
     cpt = -1;
     while (line[++(*line_size)]);
     tmp = line;
-    line = malloc(sizeof(char) * (b_read + (*line_size) + 1));
+    if (!(line = malloc(sizeof(char) * (b_read + (*line_size) + 1)))) {
+        return (NULL);
+    }
     while (tmp[++cpt]) {
         line[cpt] = tmp[cpt];
     }
@@ -19,11 +20,9 @@ static char         *my_strcat_and_realloc(char *line, int b_read, int *line_siz
     return (line);
 }
 
-static boolean      find_line(char buffer[BUFFER_SIZE], char **line, int b_read) {
-    int             i;
+static boolean      find_line(char buffer[BUFFER_SIZE], char **line, int b_read, int *char_copied) {
     int             line_size;
 
-    i = -1;
     line_size = 0;
     if (!(*line)) {
         *line = malloc(sizeof(char) * (b_read + 1));
@@ -31,28 +30,42 @@ static boolean      find_line(char buffer[BUFFER_SIZE], char **line, int b_read)
     else {
         (*line) = my_strcat_and_realloc(*line, b_read, &line_size);
     }
-    while (buffer[++i]) {
-        (*line)[++line_size - 1] = buffer[i];
-        if (buffer[i] == '\n') {
+    if (!(*line)) {
+        return (ERROR);
+    }
+    while (buffer[++(*char_copied)]) {
+        (*line)[++line_size - 1] = buffer[*(char_copied)];
+        if (buffer[*(char_copied)] == '\n') {
             (*line)[line_size - 1] = '\0';
             return (TRUE);
         }
     }
+    *(char_copied) = -1;
     (*line)[line_size] = '\0';
     return (FALSE);
 }
 
 char                *get_next_line(const int fd) {
     static char     buffer[BUFFER_SIZE + 1] = { "\0" };
+    static int      char_copied = -1;
     char            *line;
     int             b_read;
+    int             ret;
 
     line = NULL;
-    while ((b_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
-        buffer[b_read + 1] = '\0';
-        if (!find_line(buffer, &line, b_read)) {
+    if (char_copied != -1) {
+        if (!find_line(buffer, &line, BUFFER_SIZE, &char_copied)) {
             return (line);
         }
     }
+    while ((b_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
+        buffer[b_read + 1] = '\0';
+        ret = find_line(buffer, &line, b_read, &char_copied);
+        if (ret == TRUE || ret == ERROR) {
+            return (line);
+        }
+    }
+    if (line)
+        free(line);
     return (NULL);
 }

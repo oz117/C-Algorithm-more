@@ -1,0 +1,9 @@
+Get next line is a simple project returns the content of a file line by line.
+It is a very simple project. This one is as optimised as I can do, there is:
+    -only three functions
+    -no memory leaks
+
+In the .h file there is a macro that defines the size of the buffer, have fun
+changing it to try different configurations.
+By default the main tries to read the "gcc" document that is present in the
+root of the project, it contains the whole gcc man.
